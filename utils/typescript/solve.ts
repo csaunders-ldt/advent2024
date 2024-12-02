@@ -110,10 +110,12 @@ async function checkAnswer(
     },
   );
   const body = await result.text();
+  const article = body.match(/<article><p>(.*)<\/p><\/article>/);
+  const response = article?.[0] ?? article?.[1] ?? article;
   if (body.includes('not the right answer')) {
-    console.log(`Wrong answer\n${body}`);
+    console.log(`Wrong answer\n${response}`);
     return false;
   }
-  console.log(`Correct answer\n${body}`);
+  console.log(`Correct answer\n${response}`);
   return true;
 }
