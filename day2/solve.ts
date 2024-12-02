@@ -1,4 +1,3 @@
-import { partialRight } from 'lodash';
 import { solve } from '../utils/typescript';
 
 type Input = number[][];
@@ -14,16 +13,15 @@ function isBad(value: number, other: number, increasing: boolean) {
 }
 
 function isSafeLevel(line: number[], hasLife = false) {
-  const increasing = line[1] > line[0];
+  if (hasLife && isSafeLevel(line.slice(1))) return true;
 
   for (let i = 1; i < line.length; i++) {
-    if (isBad(line[i], line[i - 1], increasing)) {
-      if (!hasLife) return false;
-      return isSafeLevel(
-        line.filter((_, j) => j !== i),
-        false,
-      );
-    }
+    if (!isBad(line[i], line[i - 1], line[1] > line[0])) continue;
+    if (!hasLife) return false;
+
+    const thisLine = line.filter((_, j) => j !== i);
+    const prevLine = line.filter((_, j) => j !== i - 1);
+    return isSafeLevel(thisLine) || isSafeLevel(prevLine);
   }
   return true;
 }
