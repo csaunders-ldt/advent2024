@@ -7,8 +7,7 @@ function parser(input: string): Input {
 }
 
 function isBad(value: number, other: number, increasing: boolean) {
-  const diff = Math.abs(value - other);
-  if (diff > 3 || diff === 0) return true;
+  if (Math.abs(value - other) > 3 || value === other) return true;
   return value > other !== increasing;
 }
 
@@ -17,11 +16,7 @@ function isSafeLevel(line: number[], hasLife = false) {
 
   for (let i = 1; i < line.length; i++) {
     if (!isBad(line[i], line[i - 1], line[1] > line[0])) continue;
-    if (!hasLife) return false;
-
-    const thisLine = line.filter((_, j) => j !== i);
-    const prevLine = line.filter((_, j) => j !== i - 1);
-    return isSafeLevel(thisLine) || isSafeLevel(prevLine);
+    return hasLife && isSafeLevel(line.filter((_, j) => j !== i));
   }
   return true;
 }
